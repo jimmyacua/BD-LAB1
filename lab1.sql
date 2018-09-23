@@ -73,3 +73,64 @@ select e.NombreP, e.Apellido1, e.Apellido2, e.Cedula
 from estudiante e join Asistente a on e.Cedula = a.Cedula join Grupo g on g.CedAsist = e.Cedula;
 
 --g:
+select max(l.Nota), min(l.Nota), AVG(l.nota)
+from Lleva l
+where l.SiglaCurso = 'CI1312';
+
+--h:
+select count(*)
+from estudiante;
+
+--i:
+select g.SiglaCurso, g.NumGrupo, g.Semestre, g.Anno, p.NombreP, p.Apellido1, p.Apellido2, p.Cedula
+from Grupo g join Profesor p on g.CedProf = p.Cedula;
+/* en caso de que haya un curso 
+ * Grupo g join Profesor p on g.CedProf is NULL
+*/
+
+--j:
+select c.Sigla, c.Nombre
+from Curso c
+where c.Sigla like 'ci%';
+
+--k:
+select e.Apellido1
+from estudiante e
+-- k yk1:
+where e.Apellido1 like '%ez' or e.Apellido1 like 'M%';
+--k2: (descomentar para usar y comentar la línea de arriba)
+--where e.Apellido1 like 'M%ez';
+
+--l:
+select e.NombreP
+from estudiante e
+where len(e.NombreP) = 6;
+
+--m:
+select avg(l.Nota)
+from estudiante e join Lleva l on l.CedEstudiante = e.Cedula
+where e.Cedula = '55112233';
+
+--n:
+select DISTINCT p.NombreP, p.Apellido1, p.Apellido2
+from Profesor p
+where p.Sexo = 'M'
+UNION
+(select distinct e.NombreP, e.Apellido1, e.Apellido2
+ from estudiante e
+ where e.Sexo = 'M');
+
+ --o:
+ select e.Carne, e.NombreP, e.Apellido1, e.Apellido2
+ from estudiante e join Lleva l on e.Cedula = l.CedEstudiante
+ where l.SiglaCurso ='CI1312' and l.Nota = '65';
+
+
+--p:
+select c.Nombre
+ from Carrera c
+ where not exists (
+					select *
+					from Empadronado_en
+					where Empadronado_en.CodCarrera = c.Codigo
+					);
