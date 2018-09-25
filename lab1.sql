@@ -62,15 +62,16 @@ select c.Sigla
 from Curso c join Requiere_De rd on c.Sigla = rd.SiglaCursoRequeridor
 where  rd.SiglaCursoRequisito = 'CI1312';
 
-
 --e:
 select c.Sigla
 from Curso c join Requiere_De rd on c.Sigla = rd.SiglaCursoRequisito
 where  rd.SiglaCursoRequeridor = 'CI1312';
 
+
 --f:
-select e.NombreP, e.Apellido1, e.Apellido2, e.Cedula
-from estudiante e join Asistente a on e.Cedula = a.Cedula join Grupo g on g.CedAsist = e.Cedula;
+select e.NombreP, e.Apellido1, e.Apellido2, e.Cedula, c.Sigla
+from Curso c, estudiante e join Asistente a on e.Cedula = a.Cedula join Grupo g on g.CedAsist = e.Cedula
+ where c.Sigla = g.SiglaCurso;
 
 --g:
 select max(l.Nota), min(l.Nota), AVG(l.nota)
@@ -84,14 +85,24 @@ from estudiante;
 --i:
 select g.SiglaCurso, g.NumGrupo, g.Semestre, g.Anno, p.NombreP, p.Apellido1, p.Apellido2, p.Cedula
 from Grupo g join Profesor p on g.CedProf = p.Cedula;
-/* en caso de que haya un curso 
- * Grupo g join Profesor p on g.CedProf is NULL
-*/
+
+--en caso de que haya un curso sin profesor:
+select g.SiglaCurso, g.NumGrupo, g.Semestre, g.Anno, p.NombreP, p.Apellido1, p.Apellido2, p.Cedula
+from Grupo g left outer join Profesor p on g.CedProf = p.Cedula;
 
 --j:
 select c.Sigla, c.Nombre
 from Curso c
 where c.Sigla like 'ci%';
+
+--usando intersect;
+select c.Sigla, c.Nombre
+from Curso c
+intersect(
+		  select c1.Sigla, c1.Nombre
+		  from Curso c1
+		 where c1.Sigla like 'ci%'
+);
 
 --k:
 select e.Apellido1
@@ -104,7 +115,16 @@ where e.Apellido1 like '%ez' or e.Apellido1 like 'M%';
 --l:
 select e.NombreP
 from estudiante e
-where len(e.NombreP) = 6;
+where len(e.NombreP) = 6
+
+--usando except:
+select e.NombreP
+from estudiante e
+except(
+	   select e1.NombreP
+	   from estudiante e1
+	   where len(e1.NombreP) != 6
+);
 
 --m:
 select avg(l.Nota)
@@ -134,3 +154,4 @@ select c.Nombre
 					from Empadronado_en
 					where Empadronado_en.CodCarrera = c.Codigo
 					);
+
